@@ -16,7 +16,6 @@ import card6 from "../assets/card-6.png";
 import card7 from "../assets/card-7.png";
 import card8 from "../assets/card-8.png";
 
-// Mapeia cada par à sua imagem
 const PAIR_IMAGES: Record<string, string> = {
   p1: card1, p2: card2, p3: card3, p4: card4,
   p5: card5, p6: card6, p7: card7, p8: card8,
@@ -25,7 +24,6 @@ const PAIR_IMAGES: Record<string, string> = {
 const PAIRS = ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8"];
 const TOTAL_PAIRS = PAIRS.length;
 
-// Embaralha o baralho (16 cartas = 8 pares duplicados)
 function buildDeck() {
   const deck = PAIRS.flatMap((p, i) => [
     { uid: `${p}-a-${i}`, pairId: p, flipped: false, matched: false, wrong: false },
@@ -47,14 +45,13 @@ export default function Game() {
   const [locked, setLocked] = useState(false);
   const finishedRef = useRef(false);
 
-  // Vitória: quando achar todos os pares
   useEffect(() => {
     if (pairsFound === TOTAL_PAIRS && !finishedRef.current) {
       finishedRef.current = true;
       sounds.victory();
       const result = maybeSaveRecord(time);
       const t = setTimeout(() => {
-        navigate(`/win?time=${time}&record=${result.record}&isNew=${result.isNew ? 1 : 0}`);
+        navigate(`/vitoria?time=${time}&record=${result.record}&isNew=${result.isNew ? 1 : 0}`);
       }, 900);
       return () => clearTimeout(t);
     }
@@ -75,7 +72,6 @@ export default function Game() {
     if (newSel.length === 2) {
       const [a, b] = newSel;
       if (newDeck[a].pairId === newDeck[b].pairId) {
-        // Acertou o par
         setLocked(true);
         setTimeout(() => {
           setDeck((d) => {
@@ -90,7 +86,6 @@ export default function Game() {
           setLocked(false);
         }, 350);
       } else {
-        // Errou
         setLocked(true);
         setTimeout(() => {
           sounds.miss();
@@ -127,7 +122,6 @@ export default function Game() {
           <div className="mx-auto mt-4 h-px w-3/4 bg-border" />
         </header>
 
-        {/* Tempo + contagem de pares */}
         <div className="mt-6 flex justify-center gap-3 sm:gap-6">
           <div className="flex items-center gap-2 rounded-full bg-secondary px-4 py-2 shadow-card sm:px-6 sm:py-3">
             <Clock className="h-4 w-4 text-accent sm:h-5 sm:w-5" />
@@ -141,7 +135,6 @@ export default function Game() {
           </div>
         </div>
 
-        {/* Grid de cartas */}
         <div className="mx-auto mt-8 grid grid-cols-4 gap-3 sm:gap-5 md:gap-6">
           {deck.map((c, i) => (
             <Cartas
@@ -157,7 +150,6 @@ export default function Game() {
         </div>
       </div>
 
-      {/* Botão Voltar */}
       <div className="fixed bottom-6 left-0 right-0 z-30 flex justify-center px-4">
         <Link
           to="/"
