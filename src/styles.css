@@ -1,0 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@100..900&display=swap');
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-card-back-bg: var(--card-back-bg);
+  --color-card-front-bg: var(--card-front-bg);
+  --color-success: var(--success);
+  --font-sans: "Raleway", sans-serif;
+  --shadow-btn: 0 8px 0 var(--btn-shadow), 0 10px 20px rgba(0,0,0,0.25);
+  --shadow-btn-active: 0 4px 0 var(--btn-shadow), 0 6px 12px rgba(0,0,0,0.25);
+  --shadow-card: 0 12px 30px rgba(0,0,0,0.35);
+  --shadow-card-matched: 0 0 0 4px var(--success), 0 0 30px color-mix(in oklab, var(--success) 60%, transparent);
+}
+
+:root {
+  --radius: 1rem;
+
+  /* Tema verde escuro do jogo */
+  --background: oklch(0.28 0.06 160);
+  --foreground: oklch(0.98 0.01 120);
+
+  --card: oklch(0.35 0.07 160);
+  --card-foreground: oklch(0.98 0.01 120);
+
+  --primary: oklch(0.45 0.11 160);
+  --primary-foreground: oklch(0.98 0.01 120);
+
+  --secondary: oklch(0.32 0.06 160);
+  --secondary-foreground: oklch(0.98 0.01 120);
+
+  --muted: oklch(0.32 0.05 160);
+  --muted-foreground: oklch(0.85 0.02 140);
+
+  --accent: oklch(0.55 0.15 155);
+  --accent-foreground: oklch(0.15 0.02 160);
+
+  --destructive: oklch(0.6 0.22 25);
+  --destructive-foreground: oklch(0.98 0.01 120);
+
+  --success: oklch(0.7 0.18 145);
+
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.55 0.15 155);
+
+  --card-front-bg: oklch(0.4 0.09 160);
+  --card-back-bg: oklch(0.98 0.01 120);
+
+  --btn-shadow: oklch(0.18 0.04 160);
+
+  --popover: oklch(0.35 0.07 160);
+  --popover-foreground: oklch(0.98 0.01 120);
+}
+
+.dark {
+  /* Mesmo tema, jogo é sempre escuro */
+}
+
+@layer base {
+  * { border-color: var(--color-border); }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* === Animações do jogo === */
+@keyframes flip-in {
+  from { transform: rotateY(0deg); }
+  to   { transform: rotateY(180deg); }
+}
+@keyframes pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+@keyframes shake {
+  0%,100% { transform: translateX(0) rotateY(180deg); }
+  20%     { transform: translateX(-8px) rotateY(180deg); }
+  40%     { transform: translateX(8px) rotateY(180deg); }
+  60%     { transform: translateX(-6px) rotateY(180deg); }
+  80%     { transform: translateX(6px) rotateY(180deg); }
+}
+@keyframes float-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes glow-pulse {
+  0%,100% { box-shadow: 0 0 0 4px var(--success), 0 0 20px color-mix(in oklab, var(--success) 50%, transparent); }
+  50%     { box-shadow: 0 0 0 4px var(--success), 0 0 40px color-mix(in oklab, var(--success) 80%, transparent); }
+}
+@keyframes confetti-fall {
+  0%   { transform: translateY(-100vh) rotate(0); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+@keyframes title-bounce {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-8px); }
+}
+
+.animate-float-up { animation: float-up 0.6s ease-out both; }
+.animate-pop      { animation: pop 0.4s ease-out; }
+.animate-shake    { animation: shake 0.5s ease-in-out; }
+.animate-glow     { animation: glow-pulse 1.5s ease-in-out infinite; }
+.animate-title    { animation: title-bounce 2.5s ease-in-out infinite; }
+
+/* Card 3D */
+.card-3d { perspective: 1000px; }
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+.card-inner.flipped { transform: rotateY(180deg); }
+.card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.card-face-back { transform: rotateY(180deg); }
