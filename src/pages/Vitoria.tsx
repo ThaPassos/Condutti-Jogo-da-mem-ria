@@ -1,11 +1,11 @@
 import { Link, useSearchParams } from "react-router-dom";
 import { Trophy, Clock, Crown, Home as HomeIcon } from "lucide-react";
 import Confetes from "../components/Confetes";
-import BotãoSom from "../components/BotaoSom";
+import BotaoSom from "../components/BotaoSom";
 import { formatTime } from "../lib/record";
 import { sounds } from "../lib/sounds";
 
-export default function Win() {
+export default function Vitoria() {
   const [params] = useSearchParams();
   const time = Number(params.get("time")) || 0;
   const record = Number(params.get("record")) || 0;
@@ -13,7 +13,7 @@ export default function Win() {
 
   return (
     <div className="relative min-h-screen overflow-hidden">
-      <BotãoSom />
+      <BotaoSom />
       <Confetes count={80} />
 
       <div
@@ -42,7 +42,6 @@ export default function Win() {
           Você concluiu o jogo!
         </p>
 
-        {/* Cards de tempo e recorde */}
         <div
           className="animate-float-up mt-4 grid w-full grid-cols-1 gap-4 sm:grid-cols-2"
           style={{ animationDelay: "0.3s" }}
@@ -85,7 +84,7 @@ export default function Win() {
           style={{ animationDelay: "0.5s" }}
         >
           <Link
-            to="/game"
+            to="/jogo"
             onClick={() => sounds.click()}
             className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-8 py-4 text-base font-bold text-accent-foreground shadow-btn transition-all hover:scale-105 active:translate-y-1 active:shadow-btn-active sm:text-lg"
           >
