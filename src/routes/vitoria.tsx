@@ -1,38 +1,19 @@
-import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
-import { Trophy, Clock, Crown, Home } from "lucide-react";
-import { Confetes } from "/components/Confetes";
-import { SoundToggle } from "@/components/SoundToggle";
-import { formatTime } from "@/lib/record";
-import { sounds } from "@/lib/sounds";
+import { Link, useSearchParams } from "react-router-dom";
+import { Trophy, Clock, Crown, Home as HomeIcon } from "lucide-react";
+import Confetes from "../components/Confetes";
+import BotaoSom from "../components/BotaoSom";
+import { formatTime } from "../lib/record";
+import { sounds } from "../lib/sounds";
 
-interface WinSearch {
-  time: number;
-  record: number;
-  isNew: number;
-}
-
-export const Route = createFileRoute("/win")({
-  validateSearch: (search: Record<string, unknown>): WinSearch => ({
-    time: Number(search.time) || 0,
-    record: Number(search.record) || 0,
-    isNew: Number(search.isNew) ? 1 : 0,
-  }),
-  head: () => ({
-    meta: [
-      { title: "Parabéns! — Jogo da Memória" },
-      { name: "description", content: "Você concluiu o jogo da memória!" },
-    ],
-  }),
-  component: WinPage,
-});
-
-function WinPage() {
-  const { time, record, isNew } = useSearch({ from: "/win" });
-  const newRecord = isNew === 1;
+export default function WinPage() {
+  const [params] = useSearchParams();
+  const time = Number(params.get("time")) || 0;
+  const record = Number(params.get("record")) || 0;
+  const newRecord = Number(params.get("isNew")) === 1;
 
   return (
     <div className="relative min-h-screen overflow-hidden">
-      <SoundToggle />
+      <BotaoSom />
       <Confetes count={80} />
 
       <div
@@ -61,7 +42,6 @@ function WinPage() {
           Você concluiu o jogo!
         </p>
 
-        {/* Cards de tempo */}
         <div
           className="animate-float-up mt-4 grid w-full grid-cols-1 gap-4 sm:grid-cols-2"
           style={{ animationDelay: "0.3s" }}
@@ -75,10 +55,10 @@ function WinPage() {
           </div>
 
           <div
-            className={[
-              "rounded-2xl p-5 shadow-card transition-all",
-              newRecord ? "bg-accent text-accent-foreground animate-pop" : "bg-secondary",
-            ].join(" ")}
+            className={
+              "rounded-2xl p-5 shadow-card transition-all " +
+              (newRecord ? "bg-accent text-accent-foreground animate-pop" : "bg-secondary")
+            }
           >
             <div className="flex items-center justify-center gap-2 opacity-80">
               <Crown className="h-4 w-4" />
@@ -91,14 +71,20 @@ function WinPage() {
         </div>
 
         {newRecord && (
-          <p className="animate-float-up text-sm font-bold uppercase tracking-widest text-accent" style={{ animationDelay: "0.4s" }}>
+          <p
+            className="animate-float-up text-sm font-bold uppercase tracking-widest text-accent"
+            style={{ animationDelay: "0.4s" }}
+          >
             🏆 Você bateu o recorde anterior!
           </p>
         )}
 
-        <div className="animate-float-up mt-4 flex flex-col gap-3 sm:flex-row" style={{ animationDelay: "0.5s" }}>
+        <div
+          className="animate-float-up mt-4 flex flex-col gap-3 sm:flex-row"
+          style={{ animationDelay: "0.5s" }}
+        >
           <Link
-            to="/game"
+            to="/jogo"
             onClick={() => sounds.click()}
             className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-8 py-4 text-base font-bold text-accent-foreground shadow-btn transition-all hover:scale-105 active:translate-y-1 active:shadow-btn-active sm:text-lg"
           >
@@ -109,7 +95,7 @@ function WinPage() {
             onClick={() => sounds.click()}
             className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-bold text-primary-foreground shadow-btn transition-all hover:scale-105 active:translate-y-1 active:shadow-btn-active sm:text-lg"
           >
-            <Home className="h-5 w-5" />
+            <HomeIcon className="h-5 w-5" />
             INÍCIO
           </Link>
         </div>
