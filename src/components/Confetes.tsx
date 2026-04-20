@@ -2,14 +2,21 @@ import { useEffect, useState } from "react";
 
 const COLORS = ["#0b5e44", "#10b981", "#fbbf24", "#f5f2f2", "#34d399"];
 
+interface Piece {
+  id: number;
+  left: number;
+  delay: number;
+  duration: number;
+  color: string;
+  size: number;
+}
+
 export default function Confetti({ count = 60 }: { count?: number }) {
-  const [pieces, setPieces] = useState<
-    Array<{ id: number; left: number; delay: number; duration: number; color: string; size: number }>
-  >([]);
+  const [pieces, setPieces] = useState<Piece[]>([]);
 
   useEffect(() => {
     setPieces(
-      Array.from({ length: count }, (_, i) => ({
+      Array.from({ length: count }, (_, i): Piece => ({
         id: i,
         left: Math.random() * 100,
         delay: Math.random() * 1.5,
