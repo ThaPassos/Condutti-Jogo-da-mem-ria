@@ -5,7 +5,7 @@ let muted = false;
 function getCtx() {
   if (typeof window === "undefined") return null;
   if (!ctx) {
-    const AC = (window.AudioContext || (window as any).webkitAudioContext) as typeof AudioContext;
+    const AC = window.AudioContext;
     if (!AC) return null;
     ctx = new AC();
   }
