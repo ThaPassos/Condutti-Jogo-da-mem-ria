@@ -75,7 +75,7 @@ export default function Vitoria() {
             className="animate-float-up text-sm font-bold uppercase tracking-widest text-accent"
             style={{ animationDelay: "0.4s" }}
           >
-            🏆 Você bateu o recorde anterior!
+            Você bateu o recorde anterior!
           </p>
         )}
 
