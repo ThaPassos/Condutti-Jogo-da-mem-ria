@@ -15,6 +15,7 @@ export default function Confetti({ count = 60 }: { count?: number }) {
   const [pieces, setPieces] = useState<Piece[]>([]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPieces(
       Array.from({ length: count }, (_, i): Piece => ({
         id: i,
