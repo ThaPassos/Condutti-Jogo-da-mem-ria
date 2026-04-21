@@ -3,7 +3,7 @@ import { Play } from "lucide-react";
 import { sounds } from "../lib/sounds";
 import BotaoSom from "../components/BotaoSom";
 import AnimatedLines from "../components/LinhasAnimadas";
-import logoCondutti from "../assets/logo-condutti.png";
+import logoCondutti from "../assets/logoFundoEscuro.png";
 
 // Padrão fixo gerado uma vez, fora do componente, para evitar re-render e erro de lint
 const QR_PATTERN = Array.from({ length: 64 }, (_, i) =>
