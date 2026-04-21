@@ -39,23 +39,33 @@ function buildDeck() {
 export default function Game() {
   const navigate = useNavigate();
   const time = useTimer();
+  const timeRef = useRef(0);         // <- ref que sempre tem o valor mais recente
   const [deck, setDeck] = useState(() => buildDeck());
   const [selected, setSelected] = useState<number[]>([]);
   const [pairsFound, setPairsFound] = useState(0);
   const [locked, setLocked] = useState(false);
   const finishedRef = useRef(false);
 
+  // Mantém a ref sincronizada com o timer a cada segundo
+  useEffect(() => {
+    timeRef.current = time;
+  }, [time]);
+
+  // Detecta vitória — sem `time` nas deps para não re-executar todo segundo
   useEffect(() => {
     if (pairsFound === TOTAL_PAIRS && !finishedRef.current) {
       finishedRef.current = true;
       sounds.victory();
-      const result = maybeSaveRecord(time);
+      const finalTime = timeRef.current;   // <- lê o valor mais recente da ref
+      const result = maybeSaveRecord(finalTime);
       const t = setTimeout(() => {
-        navigate(`/vitoria?time=${time}&record=${result.record}&isNew=${result.isNew ? 1 : 0}`);
+        navigate(
+          `/vitoria?time=${finalTime}&record=${result.record}&isNew=${result.isNew ? 1 : 0}`
+        );
       }, 900);
       return () => clearTimeout(t);
     }
-  }, [pairsFound, time, navigate]);
+  }, [pairsFound, navigate]);             // <- `time` removido das dependências
 
   function handleCardClick(idx: number) {
     if (locked) return;
