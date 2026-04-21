@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Clock, Sparkles } from "lucide-react";
+import { ArrowLeft, Clock, Sparkles, Crown } from "lucide-react";
 import Cartas from "../components/Cartas";
 import BotaoSom from "../components/BotaoSom";
 import { sounds } from "../lib/sounds";
-import { formatTime, maybeSaveRecord } from "../lib/record";
+import { formatTime, maybySaveRecord, getRecord } from "../lib/record";
 import { useTimer } from "../hooks/useTimer";
 import cardBack from "../assets/card-back.png";
 import card1 from "../assets/card-1.png";
@@ -39,25 +39,24 @@ function buildDeck() {
 export default function Game() {
   const navigate = useNavigate();
   const time = useTimer();
-  const timeRef = useRef(0);         // <- ref que sempre tem o valor mais recente
+  const timeRef = useRef(0);
   const [deck, setDeck] = useState(() => buildDeck());
   const [selected, setSelected] = useState<number[]>([]);
   const [pairsFound, setPairsFound] = useState(0);
   const [locked, setLocked] = useState(false);
   const finishedRef = useRef(false);
+  const record = getRecord();
 
-  // Mantém a ref sincronizada com o timer a cada segundo
   useEffect(() => {
     timeRef.current = time;
   }, [time]);
 
-  // Detecta vitória — sem `time` nas deps para não re-executar todo segundo
   useEffect(() => {
     if (pairsFound === TOTAL_PAIRS && !finishedRef.current) {
       finishedRef.current = true;
       sounds.victory();
-      const finalTime = timeRef.current;   // <- lê o valor mais recente da ref
-      const result = maybeSaveRecord(finalTime);
+      const finalTime = timeRef.current;
+      const result = maybySaveRecord(finalTime);
       const t = setTimeout(() => {
         navigate(
           `/vitoria?time=${finalTime}&record=${result.record}&isNew=${result.isNew ? 1 : 0}`
@@ -65,7 +64,7 @@ export default function Game() {
       }, 900);
       return () => clearTimeout(t);
     }
-  }, [pairsFound, navigate]);             // <- `time` removido das dependências
+  }, [pairsFound, navigate]);
 
   function handleCardClick(idx: number) {
     if (locked) return;
@@ -137,10 +136,18 @@ export default function Game() {
             <Clock className="h-4 w-4 text-accent sm:h-5 sm:w-5" />
             <span className="text-sm font-bold tabular-nums sm:text-lg">{formatTime(time)}</span>
           </div>
+
           <div className="flex items-center gap-2 rounded-full bg-secondary px-4 py-2 shadow-card sm:px-6 sm:py-3">
             <Sparkles className="h-4 w-4 text-accent sm:h-5 sm:w-5" />
             <span className="text-sm font-bold tabular-nums sm:text-lg">
               {pairsFound}/{TOTAL_PAIRS}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 rounded-full bg-secondary px-4 py-2 shadow-card sm:px-6 sm:py-3">
+            <Crown className="h-4 w-4 text-accent sm:h-5 sm:w-5" />
+            <span className="text-sm font-bold tabular-nums sm:text-lg">
+              {record !== null ? formatTime(record) : "--:--"}
             </span>
           </div>
         </div>
