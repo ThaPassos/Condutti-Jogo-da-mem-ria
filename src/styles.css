@@ -1,20 +1,3 @@
-/*
-  FONTE LOCAL — sem dependência de internet
-  
-  ANTES DE FAZER O BUILD:
-  1. Acesse: https://fonts.google.com/specimen/Raleway
-  2. Clique em "Get font" → "Download all"
-  3. Extraia o zip e copie o arquivo:
-       Raleway/static/Raleway-VariableFont_wght.ttf
-     para dentro de:
-       src/assets/fonts/Raleway-VariableFont_wght.ttf
-  
-  Se preferir woff2 (mais leve para web):
-  - Converta em https://cloudconvert.com/ttf-to-woff2
-  - Salve como: src/assets/fonts/Raleway.woff2
-  - Atualize o src abaixo para './assets/fonts/Raleway.woff2'
-*/
-
 @font-face {
   font-family: 'Raleway';
   src: url('./assets/fonts/Raleway-VariableFont_wght.ttf') format('truetype-variations');
