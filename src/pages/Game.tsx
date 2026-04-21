@@ -4,7 +4,7 @@ import { ArrowLeft, Clock, Sparkles, Crown } from "lucide-react";
 import Cartas from "../components/Cartas";
 import BotaoSom from "../components/BotaoSom";
 import { sounds } from "../lib/sounds";
-import { formatTime, maybySaveRecord, getRecord } from "../lib/record";
+import { formatTime, maybeSaveRecord, getRecord } from "../lib/record";
 import { useTimer } from "../hooks/useTimer";
 import cardBack from "../assets/card-back.png";
 import card1 from "../assets/card-1.png";
@@ -56,7 +56,7 @@ export default function Game() {
       finishedRef.current = true;
       sounds.victory();
       const finalTime = timeRef.current;
-      const result = maybySaveRecord(finalTime);
+      const result = maybeSaveRecord(finalTime);
       const t = setTimeout(() => {
         navigate(
           `/vitoria?time=${finalTime}&record=${result.record}&isNew=${result.isNew ? 1 : 0}`
