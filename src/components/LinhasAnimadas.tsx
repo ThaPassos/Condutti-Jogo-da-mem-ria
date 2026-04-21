@@ -6,8 +6,8 @@ export default function AnimatedLines() {
       <style>{`
         @keyframes diag-slide {
           0%   { transform: translate(-70vw, 70vh) rotate(-35deg); opacity: 0; }
-          20%  { opacity: var(--line-opacity, 0.4); }
-          80%  { opacity: var(--line-opacity, 0.4); }
+          15%  { opacity: var(--line-opacity, 0.2); }
+          85%  { opacity: var(--line-opacity, 0.2); }
           100% { transform: translate(70vw, -70vh) rotate(-35deg); opacity: 0; }
         }
         @keyframes blob-float {
@@ -37,14 +37,16 @@ export default function AnimatedLines() {
         const top = ((i * 11 + 10) % 130) - 15;
         const duration = 5 + (i % 5) * 1.2;
         const delay = (i * 0.4) % 5;
-        const thickness = i % 4 === 0 ? 3 : 1;
-        const opacity = i % 4 === 0 ? 0.55 : 0.25;
+        const thickness = i % 4 === 0 ? 2 : 1;
+        const opacity = i % 4 === 0 ? 0.2 : 0.1;
         const useAccent = i % 2 === 0;
         return (
           <div
             key={i}
-            className="absolute left-1/2 top-1/2"
             style={{
+              position: "absolute",
+              left: "50%",
+              top: "50%",
               width: "140vmax",
               height: `${thickness}px`,
               marginLeft: "-70vmax",
@@ -52,6 +54,7 @@ export default function AnimatedLines() {
               background: `linear-gradient(90deg, transparent, ${
                 useAccent ? "var(--accent)" : "var(--success)"
               }, transparent)`,
+              transform: "rotate(-35deg)",
               animation: `diag-slide ${duration}s cubic-bezier(0.45, 0, 0.55, 1) ${delay}s infinite`,
               ["--line-opacity" as string]: String(opacity),
             }}
