@@ -5,7 +5,7 @@ let muted = false;
 function getCtx() {
   if (typeof window === "undefined") return null;
   if (!ctx) {
-    const AC = window.AudioContext;
+    const AC = (window.AudioContext || (window as any).webkitAudioContext) as typeof AudioContext;
     if (!AC) return null;
     ctx = new AC();
   }
@@ -55,6 +55,8 @@ export const sounds = {
     notes.forEach((n, i) => tone(n, 0.3, "triangle", 0.18, i * 0.12));
   },
   click:   () => tone(800, 0.06, "square", 0.08),
+  tick:    () => tone(1000, 0.08, "square", 0.18),
+  timeup:  () => { sweep(440, 110, 0.8, "sawtooth", 0.2); tone(220, 0.4, "square", 0.15, 0.3); },
   setMuted: (v: boolean) => { muted = v; },
   isMuted: () => muted,
 };
