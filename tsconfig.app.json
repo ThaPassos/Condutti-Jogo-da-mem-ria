@@ -21,5 +21,10 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": [
+    "src/router.tsx",
+    "src/routeTree.gen.ts",
+    "src/routes"
+  ]
 }
