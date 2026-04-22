@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-// import { ArrowLeft, Clock, Sparkles, Crown, Hourglass } from "lucide-react";
 import { ArrowLeft, Sparkles, Crown, Hourglass } from "lucide-react";
+// import { ArrowLeft, Clock, Sparkles, Crown, Hourglass } from "lucide-react";
 import Cartas from "../components/Cartas";
 import BotaoSom from "../components/BotaoSom";
 import { sounds } from "../lib/sounds";
@@ -86,7 +86,10 @@ export default function Game() {
     if (started && timeLeft === 0 && !finishedRef.current) {
       finishedRef.current = true;
       sounds.timeup();
-      const t = setTimeout(() => navigate("/"), 1800);
+      const t = setTimeout(
+        () => navigate(`/lose?pairs=${pairsFound}&total=${TOTAL_PAIRS}&time=${TIME_LIMIT}`),
+        1800
+      );
       return () => clearTimeout(t);
     }
   }, [timeLeft, started, navigate]);
