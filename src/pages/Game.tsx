@@ -92,7 +92,7 @@ export default function Game() {
       );
       return () => clearTimeout(t);
     }
-  }, [timeLeft, started, navigate]);
+  }, [timeLeft, started, navigate, pairsFound]);
 
   function handleCardClick(idx: number) {
     if (locked || !started || finishedRef.current) return;
