@@ -5,7 +5,7 @@ import BotaoSom from "../components/BotaoSom";
 import { formatTime } from "../lib/record";
 import { sounds } from "../lib/sounds";
 
-export default function Vitoria() {
+export default function Win() {
   const [params] = useSearchParams();
   const time = Number(params.get("time")) || 0;
   const record = Number(params.get("record")) || 0;
@@ -42,6 +42,7 @@ export default function Vitoria() {
           Você concluiu o jogo!
         </p>
 
+        {/* Cards de tempo e recorde */}
         <div
           className="animate-float-up mt-4 grid w-full grid-cols-1 gap-4 sm:grid-cols-2"
           style={{ animationDelay: "0.3s" }}
@@ -75,7 +76,7 @@ export default function Vitoria() {
             className="animate-float-up text-sm font-bold uppercase tracking-widest text-accent"
             style={{ animationDelay: "0.4s" }}
           >
-            Você bateu o recorde anterior!
+            🏆 Você bateu o recorde anterior!
           </p>
         )}
 
@@ -84,7 +85,7 @@ export default function Vitoria() {
           style={{ animationDelay: "0.5s" }}
         >
           <Link
-            to="/jogo"
+            to="/game"
             onClick={() => sounds.click()}
             className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-8 py-4 text-base font-bold text-accent-foreground shadow-btn transition-all hover:scale-105 active:translate-y-1 active:shadow-btn-active sm:text-lg"
           >
