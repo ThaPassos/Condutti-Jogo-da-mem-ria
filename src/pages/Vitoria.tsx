@@ -111,7 +111,7 @@ export default function Win() {
             className="animate-float-up text-sm font-bold uppercase tracking-widest text-accent"
             style={{ animationDelay: "0.4s" }}
           >
-            🏆 Você bateu o recorde mundial!
+            Você bateu o recorde!
           </p>
         )}
 

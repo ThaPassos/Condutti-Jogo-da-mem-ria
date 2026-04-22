@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-// Componente da carta. Recebe estado e a função de clique.
 export default function MemoryCard({
   flipped,
   matched,
@@ -25,14 +24,17 @@ export default function MemoryCard({
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       disabled={matched}
-      className="card-3d aspect-[3/4] w-full cursor-pointer rounded-3xl outline-none focus-visible:ring-4 focus-visible:ring-ring"
+      className={
+        "card-3d aspect-[3/4] w-full cursor-pointer outline-none focus-visible:ring-4 focus-visible:ring-ring " +
+        (matched ? "animate-glow" : "")
+      }
+      style={{ borderRadius: "var(--card-radius)" }}
     >
       <div
         className={
           "card-inner " +
           (showFlipped ? "flipped " : "") +
           (wrong ? "animate-shake " : "") +
-          (matched ? "animate-glow " : "") +
           (hover && !showFlipped ? "scale-[1.04] " : "")
         }
         style={{ transition: "transform 0.6s cubic-bezier(0.4,0,0.2,1)" }}
