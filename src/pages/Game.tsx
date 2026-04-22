@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Sparkles, Crown, Hourglass } from "lucide-react";
 // import { ArrowLeft, Clock, Sparkles, Crown, Hourglass } from "lucide-react";
+import { ArrowLeft, Sparkles, Crown, Hourglass } from "lucide-react";
 import Cartas from "../components/Cartas";
 import BotaoSom from "../components/BotaoSom";
 import { sounds } from "../lib/sounds";
@@ -92,7 +92,7 @@ export default function Game() {
       );
       return () => clearTimeout(t);
     }
-  }, [timeLeft, started, navigate, pairsFound]);
+  }, [timeLeft, started, navigate]);
 
   function handleCardClick(idx: number) {
     if (locked || !started || finishedRef.current) return;
@@ -148,7 +148,7 @@ export default function Game() {
   }
 
   const lowTime = timeLeft <= 10 && timeLeft > 0;
-  // const timeOver = started && timeLeft === 0;
+  const timeOver = started && timeLeft === 0;
 
   return (
     <div className="relative min-h-screen pb-32">
@@ -179,7 +179,7 @@ export default function Game() {
         </div>
       )}
 
-      {/* Overlay de tempo esgotado
+      {/* Overlay de tempo esgotado */}
       {timeOver && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4">
           <div className="w-full max-w-md rounded-2xl bg-secondary p-8 text-center shadow-card">
@@ -189,7 +189,7 @@ export default function Game() {
             </p>
           </div>
         </div>
-      )} */}
+      )}
 
       <div className="mx-auto w-full max-w-6xl px-4 pt-8 sm:pt-12">
         <header className="text-center">
@@ -227,6 +227,7 @@ export default function Game() {
               {record !== null ? formatTime(record) : "--:--"}
             </span>
           </div>
+          
         </div>
 
         {/* Grid de cartas */}
