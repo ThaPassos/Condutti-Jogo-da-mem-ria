@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Clock, Sparkles, Crown } from "lucide-react";
-import Cartas from "../components/Cartas";
-import BotaoSom from "../components/BotaoSom";
+import { ArrowLeft, Clock, Sparkles, Crown, Hourglass } from "lucide-react";
+import MemoryCard from "../components/MemoryCard";
+import SoundToggle from "../components/SoundToggle";
 import { sounds } from "../lib/sounds";
 import { formatTime, maybeSaveRecord, getRecord } from "../lib/record";
-import { useTimer } from "../hooks/useTimer";
 import cardBack from "../assets/card-back.png";
 import card1 from "../assets/card-1.png";
 import card2 from "../assets/card-2.png";
@@ -23,6 +22,7 @@ const PAIR_IMAGES: Record<string, string> = {
 
 const PAIRS = ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8"];
 const TOTAL_PAIRS = PAIRS.length;
+const TIME_LIMIT = 90; // 1:30
 
 function buildDeck() {
   const deck = PAIRS.flatMap((p, i) => [
@@ -38,8 +38,8 @@ function buildDeck() {
 
 export default function Game() {
   const navigate = useNavigate();
-  const time = useTimer();
-  const timeRef = useRef(0);
+  const [started, setStarted] = useState(false); // controla o modal de aviso
+  const [timeLeft, setTimeLeft] = useState(TIME_LIMIT);
   const [deck, setDeck] = useState(() => buildDeck());
   const [selected, setSelected] = useState<number[]>([]);
   const [pairsFound, setPairsFound] = useState(0);
@@ -47,27 +47,51 @@ export default function Game() {
   const finishedRef = useRef(false);
   const record = getRecord();
 
-  useEffect(() => {
-    timeRef.current = time;
-  }, [time]);
+  const timeUsed = TIME_LIMIT - timeLeft;
 
+  // Contagem regressiva — só roda depois do start
+  useEffect(() => {
+    if (!started) return;
+    if (finishedRef.current) return;
+    const id = setInterval(() => {
+      setTimeLeft((t) => (t > 0 ? t - 1 : 0));
+    }, 1000);
+    return () => clearInterval(id);
+  }, [started]);
+
+  // Som de "tick" nos últimos 10 segundos
+  useEffect(() => {
+    if (!started || finishedRef.current) return;
+    if (timeLeft > 0 && timeLeft <= 10) {
+      sounds.tick();
+    }
+  }, [timeLeft, started]);
+
+  // Vitória
   useEffect(() => {
     if (pairsFound === TOTAL_PAIRS && !finishedRef.current) {
       finishedRef.current = true;
       sounds.victory();
-      const finalTime = timeRef.current;
-      const result = maybeSaveRecord(finalTime);
+      const result = maybeSaveRecord(timeUsed);
       const t = setTimeout(() => {
-        navigate(
-          `/vitoria?time=${finalTime}&record=${result.record}&isNew=${result.isNew ? 1 : 0}`
-        );
+        navigate(`/win?time=${timeUsed}&record=${result.record}&isNew=${result.isNew ? 1 : 0}`);
       }, 900);
       return () => clearTimeout(t);
     }
-  }, [pairsFound, navigate]);
+  }, [pairsFound, timeUsed, navigate]);
+
+  // Derrota: tempo acabou
+  useEffect(() => {
+    if (started && timeLeft === 0 && !finishedRef.current) {
+      finishedRef.current = true;
+      sounds.timeup();
+      const t = setTimeout(() => navigate("/"), 1800);
+      return () => clearTimeout(t);
+    }
+  }, [timeLeft, started, navigate]);
 
   function handleCardClick(idx: number) {
-    if (locked) return;
+    if (locked || !started || finishedRef.current) return;
     const card = deck[idx];
     if (card.matched || card.flipped) return;
 
@@ -119,9 +143,49 @@ export default function Game() {
     }
   }
 
+  const lowTime = timeLeft <= 10 && timeLeft > 0;
+  const timeOver = started && timeLeft === 0;
+
   return (
     <div className="relative min-h-screen pb-32">
-      <BotaoSom />
+      <SoundToggle />
+
+      {/* Modal de aviso antes do jogo começar */}
+      {!started && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
+          <div className="w-full max-w-md rounded-2xl bg-secondary p-8 text-center shadow-card">
+            <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-full bg-accent">
+              <Hourglass className="h-8 w-8 text-accent-foreground" />
+            </div>
+            <h2 className="text-2xl font-black sm:text-3xl">ATENÇÃO!</h2>
+            <p className="mt-3 text-base text-foreground/90 sm:text-lg">
+              Você terá <span className="font-black text-accent">1:30</span> para encontrar
+              todos os pares. Boa sorte!
+            </p>
+            <button
+              onClick={() => {
+                sounds.click();
+                setStarted(true);
+              }}
+              className="mt-6 inline-flex items-center justify-center rounded-full bg-primary px-8 py-3 text-base font-bold text-primary-foreground shadow-btn transition-all hover:scale-105 hover:bg-accent active:translate-y-1 active:shadow-btn-active sm:text-lg"
+            >
+              COMEÇAR
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Overlay de tempo esgotado */}
+      {timeOver && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4">
+          <div className="w-full max-w-md rounded-2xl bg-secondary p-8 text-center shadow-card">
+            <h2 className="text-3xl font-black text-destructive sm:text-4xl">TEMPO ESGOTADO!</h2>
+            <p className="mt-3 text-base text-foreground/90 sm:text-lg">
+              Voltando para o início...
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="mx-auto w-full max-w-6xl px-4 pt-8 sm:pt-12">
         <header className="text-center">
@@ -131,30 +195,40 @@ export default function Game() {
           <div className="mx-auto mt-4 h-px w-3/4 bg-border" />
         </header>
 
-        <div className="mt-6 flex justify-center gap-3 sm:gap-6">
+        {/* Tempo decorrido + pares + recorde + countdown */}
+        <div className="mt-6 flex flex-wrap justify-center gap-3 sm:gap-6">
           <div className="flex items-center gap-2 rounded-full bg-secondary px-4 py-2 shadow-card sm:px-6 sm:py-3">
             <Clock className="h-4 w-4 text-accent sm:h-5 sm:w-5" />
-            <span className="text-sm font-bold tabular-nums sm:text-lg">{formatTime(time)}</span>
+            <span className="text-sm font-bold tabular-nums sm:text-lg">{formatTime(timeUsed)}</span>
           </div>
-
           <div className="flex items-center gap-2 rounded-full bg-secondary px-4 py-2 shadow-card sm:px-6 sm:py-3">
             <Sparkles className="h-4 w-4 text-accent sm:h-5 sm:w-5" />
             <span className="text-sm font-bold tabular-nums sm:text-lg">
               {pairsFound}/{TOTAL_PAIRS}
             </span>
           </div>
-
           <div className="flex items-center gap-2 rounded-full bg-secondary px-4 py-2 shadow-card sm:px-6 sm:py-3">
             <Crown className="h-4 w-4 text-accent sm:h-5 sm:w-5" />
             <span className="text-sm font-bold tabular-nums sm:text-lg">
               {record !== null ? formatTime(record) : "--:--"}
             </span>
           </div>
+          {/* Contagem regressiva — fica vermelho e pulsa nos últimos 10s */}
+          <div
+            className={
+              "flex items-center gap-2 rounded-full px-4 py-2 shadow-card sm:px-6 sm:py-3 transition-colors " +
+              (lowTime ? "bg-destructive text-destructive-foreground animate-pulse" : "bg-secondary")
+            }
+          >
+            <Hourglass className={"h-4 w-4 sm:h-5 sm:w-5 " + (lowTime ? "" : "text-accent")} />
+            <span className="text-sm font-bold tabular-nums sm:text-lg">{formatTime(timeLeft)}</span>
+          </div>
         </div>
 
+        {/* Grid de cartas */}
         <div className="mx-auto mt-8 grid grid-cols-4 gap-3 sm:gap-5 md:gap-6">
           {deck.map((c, i) => (
-            <Cartas
+            <MemoryCard
               key={c.uid}
               flipped={c.flipped}
               matched={c.matched}
@@ -167,6 +241,7 @@ export default function Game() {
         </div>
       </div>
 
+      {/* Botão Voltar */}
       <div className="fixed bottom-6 left-0 right-0 z-30 flex justify-center px-4">
         <Link
           to="/"
