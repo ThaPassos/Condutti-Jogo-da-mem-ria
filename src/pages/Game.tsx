@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Clock, Sparkles, Crown, Hourglass } from "lucide-react";
-import MemoryCard from "../components/MemoryCard";
-import SoundToggle from "../components/SoundToggle";
+import Cartas from "../components/Cartas";
+import BotaoSom from "../components/BotaoSom";
 import { sounds } from "../lib/sounds";
 import { formatTime, maybeSaveRecord, getRecord } from "../lib/record";
 import cardBack from "../assets/card-back.png";
@@ -85,7 +85,10 @@ export default function Game() {
     if (started && timeLeft === 0 && !finishedRef.current) {
       finishedRef.current = true;
       sounds.timeup();
-      const t = setTimeout(() => navigate("/"), 1800);
+      const t = setTimeout(
+        () => navigate(`/lose?pairs=${pairsFound}&total=${TOTAL_PAIRS}&time=${TIME_LIMIT}`),
+        1800
+      );
       return () => clearTimeout(t);
     }
   }, [timeLeft, started, navigate]);
@@ -148,7 +151,7 @@ export default function Game() {
 
   return (
     <div className="relative min-h-screen pb-32">
-      <SoundToggle />
+      <BotaoSom />
 
       {/* Modal de aviso antes do jogo começar */}
       {!started && (
@@ -228,7 +231,7 @@ export default function Game() {
         {/* Grid de cartas */}
         <div className="mx-auto mt-8 grid grid-cols-4 gap-3 sm:gap-5 md:gap-6">
           {deck.map((c, i) => (
-            <MemoryCard
+            <Cartas
               key={c.uid}
               flipped={c.flipped}
               matched={c.matched}
