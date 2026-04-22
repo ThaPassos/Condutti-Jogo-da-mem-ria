@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-// import { ArrowLeft, Clock, Sparkles, Crown, Hourglass } from "lucide-react";
 import { ArrowLeft, Sparkles, Crown, Hourglass } from "lucide-react";
 import Cartas from "../components/Cartas";
 import BotaoSom from "../components/BotaoSom";
 import { sounds } from "../lib/sounds";
-import { formatTime, maybeSaveRecord, getRecord } from "../lib/record";
+import { formatTime, maybeSaveRecord } from "../lib/record";
+import { fetchGlobalRecord } from "../lib/api";
 import cardBack from "../assets/card-back.png";
 import card1 from "../assets/card-1.png";
 import card2 from "../assets/card-2.png";
@@ -23,7 +23,7 @@ const PAIR_IMAGES: Record<string, string> = {
 
 const PAIRS = ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8"];
 const TOTAL_PAIRS = PAIRS.length;
-const TIME_LIMIT = 60; 
+const TIME_LIMIT = 90;
 
 function buildDeck() {
   const deck = PAIRS.flatMap((p, i) => [
@@ -39,18 +39,23 @@ function buildDeck() {
 
 export default function Game() {
   const navigate = useNavigate();
-  const [started, setStarted] = useState(false); // controla o modal de aviso
+  const [started, setStarted] = useState(false);
   const [timeLeft, setTimeLeft] = useState(TIME_LIMIT);
   const [deck, setDeck] = useState(() => buildDeck());
   const [selected, setSelected] = useState<number[]>([]);
   const [pairsFound, setPairsFound] = useState(0);
   const [locked, setLocked] = useState(false);
+  const [globalRecord, setGlobalRecord] = useState<number | null>(null);
   const finishedRef = useRef(false);
-  const record = getRecord();
 
   const timeUsed = TIME_LIMIT - timeLeft;
 
-  // Contagem regressiva — só roda depois do start
+  // Busca recorde global ao montar
+  useEffect(() => {
+    fetchGlobalRecord().then(setGlobalRecord).catch(() => setGlobalRecord(null));
+  }, []);
+
+  // Contagem regressiva
   useEffect(() => {
     if (!started) return;
     if (finishedRef.current) return;
@@ -60,12 +65,10 @@ export default function Game() {
     return () => clearInterval(id);
   }, [started]);
 
-  // Som de "tick" nos últimos 10 segundos
+  // Tick nos últimos 10s
   useEffect(() => {
     if (!started || finishedRef.current) return;
-    if (timeLeft > 0 && timeLeft <= 10) {
-      sounds.tick();
-    }
+    if (timeLeft > 0 && timeLeft <= 10) sounds.tick();
   }, [timeLeft, started]);
 
   // Vitória
@@ -73,26 +76,25 @@ export default function Game() {
     if (pairsFound === TOTAL_PAIRS && !finishedRef.current) {
       finishedRef.current = true;
       sounds.victory();
-      const result = maybeSaveRecord(timeUsed);
+      maybeSaveRecord(timeUsed);
       const t = setTimeout(() => {
-        navigate(`/win?time=${timeUsed}&record=${result.record}&isNew=${result.isNew ? 1 : 0}`);
+        navigate(`/vitoria?time=${timeUsed}`);
       }, 900);
       return () => clearTimeout(t);
     }
   }, [pairsFound, timeUsed, navigate]);
 
-  // Derrota: tempo acabou
+  // Derrota
   useEffect(() => {
     if (started && timeLeft === 0 && !finishedRef.current) {
       finishedRef.current = true;
       sounds.timeup();
-      const t = setTimeout(
-        () => navigate(`/derrota?pairs=${pairsFound}&total=${TOTAL_PAIRS}&time=${TIME_LIMIT}`),
-        1800
-      );
+      const t = setTimeout(() => {
+        navigate(`/derrota?pairs=${pairsFound}&total=${TOTAL_PAIRS}&time=${TIME_LIMIT}`);
+      }, 1000);
       return () => clearTimeout(t);
     }
-  }, [timeLeft, started, navigate]);
+  }, [timeLeft, started, navigate, pairsFound]);
 
   function handleCardClick(idx: number) {
     if (locked || !started || finishedRef.current) return;
@@ -148,13 +150,12 @@ export default function Game() {
   }
 
   const lowTime = timeLeft <= 10 && timeLeft > 0;
-  const timeOver = started && timeLeft === 0;
 
   return (
     <div className="relative min-h-screen pb-32">
       <BotaoSom />
 
-      {/* Modal de aviso antes do jogo começar */}
+      {/* Modal de início */}
       {!started && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
           <div className="w-full max-w-md rounded-2xl bg-secondary p-8 text-center shadow-card">
@@ -163,27 +164,20 @@ export default function Game() {
             </div>
             <h2 className="text-2xl font-black sm:text-3xl">ATENÇÃO!</h2>
             <p className="mt-3 text-base text-foreground/90 sm:text-lg">
-              Você terá <span className="font-black text-accent">1:00</span> para encontrar
+              Você terá <span className="font-black text-accent">1:30</span> para encontrar
               todos os pares. Boa sorte!
             </p>
+            {globalRecord !== null && (
+              <p className="mt-2 text-sm text-foreground/70">
+                🏆 Recorde global: <span className="font-black">{formatTime(globalRecord)}</span>
+              </p>
+            )}
             <button
-              onClick={() => {
-                sounds.click();
-                setStarted(true);
-              }}
+              onClick={() => { sounds.click(); setStarted(true); }}
               className="mt-6 inline-flex items-center justify-center rounded-full bg-primary px-8 py-3 text-base font-bold text-primary-foreground shadow-btn transition-all hover:scale-105 hover:bg-accent active:translate-y-1 active:shadow-btn-active sm:text-lg"
             >
               COMEÇAR
             </button>
-          </div>
-        </div>
-      )}
-
-      {/* Overlay de tempo esgotado */}
-      {timeOver && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4">
-          <div className="w-full max-w-md rounded-2xl bg-secondary p-8 text-center shadow-card">
-            <h2 className="text-3xl font-black text-destructive sm:text-4xl">TEMPO ESGOTADO!</h2>
           </div>
         </div>
       )}
@@ -196,14 +190,7 @@ export default function Game() {
           <div className="mx-auto mt-4 h-px w-3/4 bg-border" />
         </header>
 
-        {/* Tempo decorrido + pares + recorde + countdown */}
         <div className="mt-6 flex flex-wrap justify-center gap-3 sm:gap-6">
-          {/* <div className="flex items-center gap-2 rounded-full bg-secondary px-4 py-2 shadow-card sm:px-6 sm:py-3">
-            <Clock className="h-4 w-4 text-accent sm:h-5 sm:w-5" />
-            <span className="text-sm font-bold tabular-nums sm:text-lg">{formatTime(timeUsed)}</span>
-          </div> */}
-
-          {/* Contagem regressiva — fica vermelho e pulsa nos últimos 10s */}
           <div
             className={
               "flex items-center gap-2 rounded-full px-4 py-2 shadow-card sm:px-6 sm:py-3 transition-colors " +
@@ -213,22 +200,22 @@ export default function Game() {
             <Hourglass className={"h-4 w-4 sm:h-5 sm:w-5 " + (lowTime ? "" : "text-accent")} />
             <span className="text-sm font-bold tabular-nums sm:text-lg">{formatTime(timeLeft)}</span>
           </div>
+
           <div className="flex items-center gap-2 rounded-full bg-secondary px-4 py-2 shadow-card sm:px-6 sm:py-3">
             <Sparkles className="h-4 w-4 text-accent sm:h-5 sm:w-5" />
             <span className="text-sm font-bold tabular-nums sm:text-lg">
               {pairsFound}/{TOTAL_PAIRS}
             </span>
           </div>
+
           <div className="flex items-center gap-2 rounded-full bg-secondary px-4 py-2 shadow-card sm:px-6 sm:py-3">
             <Crown className="h-4 w-4 text-accent sm:h-5 sm:w-5" />
             <span className="text-sm font-bold tabular-nums sm:text-lg">
-              {record !== null ? formatTime(record) : "--:--"}
+              {globalRecord !== null ? formatTime(globalRecord) : "--:--"}
             </span>
           </div>
-          
         </div>
 
-        {/* Grid de cartas */}
         <div className="mx-auto mt-8 grid grid-cols-4 gap-3 sm:gap-5 md:gap-6">
           {deck.map((c, i) => (
             <Cartas
@@ -244,7 +231,6 @@ export default function Game() {
         </div>
       </div>
 
-      {/* Botão Voltar */}
       <div className="fixed bottom-6 left-0 right-0 z-30 flex justify-center px-4">
         <Link
           to="/"
