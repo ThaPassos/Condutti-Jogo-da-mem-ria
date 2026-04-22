@@ -46,7 +46,12 @@ export default function Game() {
   const [pairsFound, setPairsFound] = useState(0);
   const [locked, setLocked] = useState(false);
   const [globalRecord, setGlobalRecord] = useState<number | null>(null);
+
   const finishedRef = useRef(false);
+  // Referência ao timestamp de início — garante timer preciso em mobile
+  const startTimeRef = useRef<number | null>(null);
+  // Guarda pairsFound em ref para uso dentro de callbacks/timeouts
+  const pairsFoundRef = useRef(0);
 
   const timeUsed = TIME_LIMIT - timeLeft;
 
@@ -55,46 +60,46 @@ export default function Game() {
     fetchGlobalRecord().then(setGlobalRecord).catch(() => setGlobalRecord(null));
   }, []);
 
-  // Contagem regressiva
+  // Contagem regressiva com Date.now() — preciso mesmo em mobile
   useEffect(() => {
     if (!started) return;
     if (finishedRef.current) return;
+
+    startTimeRef.current = Date.now();
+
     const id = setInterval(() => {
-      setTimeLeft((t) => (t > 0 ? t - 1 : 0));
-    }, 1000);
+      if (!startTimeRef.current) return;
+      const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000);
+      const remaining = Math.max(TIME_LIMIT - elapsed, 0);
+      setTimeLeft(remaining);
+
+      // Encerra o intervalo quando chegar a zero
+      if (remaining === 0) clearInterval(id);
+    }, 500); // 500ms para maior responsividade
+
     return () => clearInterval(id);
   }, [started]);
 
-  // Tick nos últimos 10s
+  // Tick sonoro nos últimos 10s
   useEffect(() => {
     if (!started || finishedRef.current) return;
     if (timeLeft > 0 && timeLeft <= 10) sounds.tick();
   }, [timeLeft, started]);
 
-  // Vitória
-  useEffect(() => {
-    if (pairsFound === TOTAL_PAIRS && !finishedRef.current) {
-      finishedRef.current = true;
-      sounds.victory();
-      maybeSaveRecord(timeUsed);
-      const t = setTimeout(() => {
-        navigate(`/vitoria?time=${timeUsed}`);
-      }, 900);
-      return () => clearTimeout(t);
-    }
-  }, [pairsFound, timeUsed, navigate]);
-
-  // Derrota
+  // Derrota por tempo
   useEffect(() => {
     if (started && timeLeft === 0 && !finishedRef.current) {
       finishedRef.current = true;
       sounds.timeup();
+      const elapsed = startTimeRef.current
+        ? Math.floor((Date.now() - startTimeRef.current) / 1000)
+        : TIME_LIMIT;
       const t = setTimeout(() => {
-        navigate(`/derrota?pairs=${pairsFound}&total=${TOTAL_PAIRS}&time=${TIME_LIMIT}`);
+        navigate(`/derrota?pairs=${pairsFoundRef.current}&total=${TOTAL_PAIRS}&time=${elapsed}`);
       }, 1000);
       return () => clearTimeout(t);
     }
-  }, [timeLeft, started, navigate, pairsFound]);
+  }, [timeLeft, started, navigate]);
 
   function handleCardClick(idx: number) {
     if (locked || !started || finishedRef.current) return;
@@ -110,7 +115,9 @@ export default function Game() {
 
     if (newSel.length === 2) {
       const [a, b] = newSel;
+
       if (newDeck[a].pairId === newDeck[b].pairId) {
+        // Par encontrado
         setLocked(true);
         setTimeout(() => {
           setDeck((d) => {
@@ -120,11 +127,28 @@ export default function Game() {
             return cp;
           });
           sounds.match();
-          setPairsFound((p) => p + 1);
+
+          const newPairsFound = pairsFoundRef.current + 1;
+          pairsFoundRef.current = newPairsFound;
+          setPairsFound(newPairsFound);
           setSelected([]);
           setLocked(false);
+
+          // Verifica vitória imediatamente, sem depender do estado React
+          if (newPairsFound === TOTAL_PAIRS && !finishedRef.current) {
+            finishedRef.current = true;
+            sounds.victory();
+            const elapsed = startTimeRef.current
+              ? Math.floor((Date.now() - startTimeRef.current) / 1000)
+              : timeUsed;
+            maybeSaveRecord(elapsed);
+            setTimeout(() => {
+              navigate(`/vitoria?time=${elapsed}`);
+            }, 900);
+          }
         }, 350);
       } else {
+        // Par errado
         setLocked(true);
         setTimeout(() => {
           sounds.miss();
