@@ -10,6 +10,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/jogo" element={<Game />} />
         <Route path="/vitoria" element={<Vitoria />} />
+        <Route path="derrota" element/>
         <Route path="*" element={<Home />} />
       </Routes>
     </HashRouter>

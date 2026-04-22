@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Clock, Sparkles, Crown, Hourglass } from "lucide-react";
-import MemoryCard from "../components/MemoryCard";
-import SoundToggle from "../components/SoundToggle";
+// import { ArrowLeft, Clock, Sparkles, Crown, Hourglass } from "lucide-react";
+import { ArrowLeft, Sparkles, Crown, Hourglass } from "lucide-react";
+import Cartas from "../components/Cartas";
+import BotaoSom from "../components/BotaoSom";
 import { sounds } from "../lib/sounds";
 import { formatTime, maybeSaveRecord, getRecord } from "../lib/record";
 import cardBack from "../assets/card-back.png";
@@ -144,11 +145,11 @@ export default function Game() {
   }
 
   const lowTime = timeLeft <= 10 && timeLeft > 0;
-  const timeOver = started && timeLeft === 0;
+  // const timeOver = started && timeLeft === 0;
 
   return (
     <div className="relative min-h-screen pb-32">
-      <SoundToggle />
+      <BotaoSom />
 
       {/* Modal de aviso antes do jogo começar */}
       {!started && (
@@ -175,7 +176,7 @@ export default function Game() {
         </div>
       )}
 
-      {/* Overlay de tempo esgotado */}
+      {/* Overlay de tempo esgotado
       {timeOver && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4">
           <div className="w-full max-w-md rounded-2xl bg-secondary p-8 text-center shadow-card">
@@ -185,7 +186,7 @@ export default function Game() {
             </p>
           </div>
         </div>
-      )}
+      )} */}
 
       <div className="mx-auto w-full max-w-6xl px-4 pt-8 sm:pt-12">
         <header className="text-center">
@@ -197,9 +198,19 @@ export default function Game() {
 
         {/* Tempo decorrido + pares + recorde + countdown */}
         <div className="mt-6 flex flex-wrap justify-center gap-3 sm:gap-6">
-          <div className="flex items-center gap-2 rounded-full bg-secondary px-4 py-2 shadow-card sm:px-6 sm:py-3">
+          {/* <div className="flex items-center gap-2 rounded-full bg-secondary px-4 py-2 shadow-card sm:px-6 sm:py-3">
             <Clock className="h-4 w-4 text-accent sm:h-5 sm:w-5" />
             <span className="text-sm font-bold tabular-nums sm:text-lg">{formatTime(timeUsed)}</span>
+          </div> */}
+          {/* Contagem regressiva — fica vermelho e pulsa nos últimos 10s */}
+          <div
+            className={
+              "flex items-center gap-2 rounded-full px-4 py-2 shadow-card sm:px-6 sm:py-3 transition-colors " +
+              (lowTime ? "bg-destructive text-destructive-foreground animate-pulse" : "bg-secondary")
+            }
+          >
+            <Hourglass className={"h-4 w-4 sm:h-5 sm:w-5 " + (lowTime ? "" : "text-accent")} />
+            <span className="text-sm font-bold tabular-nums sm:text-lg">{formatTime(timeLeft)}</span>
           </div>
           <div className="flex items-center gap-2 rounded-full bg-secondary px-4 py-2 shadow-card sm:px-6 sm:py-3">
             <Sparkles className="h-4 w-4 text-accent sm:h-5 sm:w-5" />
@@ -213,22 +224,12 @@ export default function Game() {
               {record !== null ? formatTime(record) : "--:--"}
             </span>
           </div>
-          {/* Contagem regressiva — fica vermelho e pulsa nos últimos 10s */}
-          <div
-            className={
-              "flex items-center gap-2 rounded-full px-4 py-2 shadow-card sm:px-6 sm:py-3 transition-colors " +
-              (lowTime ? "bg-destructive text-destructive-foreground animate-pulse" : "bg-secondary")
-            }
-          >
-            <Hourglass className={"h-4 w-4 sm:h-5 sm:w-5 " + (lowTime ? "" : "text-accent")} />
-            <span className="text-sm font-bold tabular-nums sm:text-lg">{formatTime(timeLeft)}</span>
-          </div>
         </div>
 
         {/* Grid de cartas */}
         <div className="mx-auto mt-8 grid grid-cols-4 gap-3 sm:gap-5 md:gap-6">
           {deck.map((c, i) => (
-            <MemoryCard
+            <Cartas
               key={c.uid}
               flipped={c.flipped}
               matched={c.matched}
