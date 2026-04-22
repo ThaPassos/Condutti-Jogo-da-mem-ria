@@ -2,6 +2,7 @@ import { HashRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Game from "./pages/Game";
 import Vitoria from "./pages/Vitoria";
+import Derrota from "./pages/Derrota"
 
 export default function App() {
   return (
@@ -10,7 +11,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/jogo" element={<Game />} />
         <Route path="/vitoria" element={<Vitoria />} />
-        <Route path="derrota" element/>
+        <Route path="/derrota" element={<Derrota/>}/>
         <Route path="*" element={<Home />} />
       </Routes>
     </HashRouter>

@@ -4,8 +4,8 @@ import { sounds } from "../lib/sounds";
 import BotaoSom from "../components/BotaoSom";
 import AnimatedLines from "../components/LinhasAnimadas";
 import logoCondutti from "../assets/logoFundoEscuro.png";
-import qrCode1 from "../assets/qrcode.png";
-import qrCode2 from "../assets/qrcode.png"; 
+import qrCode1 from "../assets/qrcode (1).png";
+import qrCode2 from "../assets/qrcode (1).png"; 
 
 export default function Home() {
   return (
@@ -58,7 +58,7 @@ export default function Home() {
               href="https://condutti.com.br/" // ← troque pelo link correto
               target="_blank"
               rel="noreferrer"
-              className="grid h-32 w-32 place-items-center rounded-2xl bg-white p-2 shadow-card transition-transform hover:scale-105"
+              className="grid h-32 w-32 place-items-center rounded-2xl p-2 shadow-card transition-transform hover:scale-105"
             >
               <img
                 src={qrCode1}
@@ -66,7 +66,7 @@ export default function Home() {
                 className="h-full w-full object-contain"
               />
             </a>
-            <p className="text-sm text-foreground/80">Legenda QR 1</p>{/* ← troque o texto */}
+            <p className="text-sm text-foreground/80">Visite o nosso site!</p>{/* ← troque o texto */}
           </div>
 
           {/* QR Code 2 — substitua quando tiver a imagem */}
@@ -75,7 +75,7 @@ export default function Home() {
               href="https://condutti.com.br/" // ← troque pelo link correto
               target="_blank"
               rel="noreferrer"
-              className="grid h-32 w-32 place-items-center rounded-2xl bg-white p-2 shadow-card transition-transform hover:scale-105"
+              className="grid h-32 w-32 place-items-center rounded-2xl  p-2 shadow-card transition-transform hover:scale-105"
             >
               {qrCode2 ? (
                 <img
@@ -90,7 +90,7 @@ export default function Home() {
                 </div>
               )}
             </a>
-            <p className="text-sm text-foreground/80">Legenda QR 2</p>{/* ← troque o texto */}
+            <p className="text-sm text-foreground/80">Visite o nosso site!</p>{/* ← troque o texto */}
           </div>
         </div>
       </div>

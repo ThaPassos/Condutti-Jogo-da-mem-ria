@@ -23,7 +23,7 @@ const PAIR_IMAGES: Record<string, string> = {
 
 const PAIRS = ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8"];
 const TOTAL_PAIRS = PAIRS.length;
-const TIME_LIMIT = 90; // 1:30
+const TIME_LIMIT = 60; 
 
 function buildDeck() {
   const deck = PAIRS.flatMap((p, i) => [
@@ -87,7 +87,7 @@ export default function Game() {
       finishedRef.current = true;
       sounds.timeup();
       const t = setTimeout(
-        () => navigate(`/lose?pairs=${pairsFound}&total=${TOTAL_PAIRS}&time=${TIME_LIMIT}`),
+        () => navigate(`/derrota?pairs=${pairsFound}&total=${TOTAL_PAIRS}&time=${TIME_LIMIT}`),
         1800
       );
       return () => clearTimeout(t);
@@ -163,7 +163,7 @@ export default function Game() {
             </div>
             <h2 className="text-2xl font-black sm:text-3xl">ATENÇÃO!</h2>
             <p className="mt-3 text-base text-foreground/90 sm:text-lg">
-              Você terá <span className="font-black text-accent">1:30</span> para encontrar
+              Você terá <span className="font-black text-accent">1:00</span> para encontrar
               todos os pares. Boa sorte!
             </p>
             <button
@@ -184,9 +184,6 @@ export default function Game() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4">
           <div className="w-full max-w-md rounded-2xl bg-secondary p-8 text-center shadow-card">
             <h2 className="text-3xl font-black text-destructive sm:text-4xl">TEMPO ESGOTADO!</h2>
-            <p className="mt-3 text-base text-foreground/90 sm:text-lg">
-              Voltando para o início...
-            </p>
           </div>
         </div>
       )}
@@ -205,6 +202,7 @@ export default function Game() {
             <Clock className="h-4 w-4 text-accent sm:h-5 sm:w-5" />
             <span className="text-sm font-bold tabular-nums sm:text-lg">{formatTime(timeUsed)}</span>
           </div> */}
+
           {/* Contagem regressiva — fica vermelho e pulsa nos últimos 10s */}
           <div
             className={
