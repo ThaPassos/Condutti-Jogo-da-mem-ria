@@ -68,6 +68,13 @@ export default function PrizeWheel() {
       ctx.restore();
     });
 
+    // Borda branca externa
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius + 2, 0, 2 * Math.PI);
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 4;
+    ctx.stroke();
+
     ctx.beginPath();
     ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
     ctx.strokeStyle = "rgba(255,255,255,0.15)";
