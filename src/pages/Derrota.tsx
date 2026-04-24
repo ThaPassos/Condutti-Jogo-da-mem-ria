@@ -14,7 +14,7 @@ export default function Lose() {
 
   // Redireciona para o início após 10 segundos
   useEffect(() => {
-    const id = setTimeout(() => navigate("/"), 10000);
+    const id = setTimeout(() => navigate("/"), 15000);
     return () => clearTimeout(id);
   }, [navigate]);
 
