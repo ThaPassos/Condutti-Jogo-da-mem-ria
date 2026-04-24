@@ -100,6 +100,16 @@ export default function Vitoria() {
           </div>
         </div>
 
+
+        {isNewGlobal && !loading && (
+          <p
+            className="animate-float-up -mt-4 text-sm font-bold uppercase tracking-widest text-accent mb-[70px]"
+            style={{ animationDelay: "0.45s" }}
+          >
+            Você bateu o recorde global!
+          </p>
+        )}
+
         {/* Roleta de brindes - mantida do primeiro código */}
         <div
           className="animate-float-up mt-2 mb-[70px] 
@@ -108,15 +118,6 @@ export default function Vitoria() {
         >
           <Roleta />
         </div>
-
-        {isNewGlobal && !loading && (
-          <p
-            className="animate-float-up -mt-4 text-sm font-bold uppercase tracking-widest text-accent"
-            style={{ animationDelay: "0.45s" }}
-          >
-            Você bateu o recorde global!
-          </p>
-        )}
 
         <div
           className="animate-float-up flex flex-col gap-3 sm:flex-row"

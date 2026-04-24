@@ -23,7 +23,7 @@ const PAIR_IMAGES: Record<string, string> = {
 
 const PAIRS = ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8"];
 const TOTAL_PAIRS = PAIRS.length;
-const TIME_LIMIT = 90; // 1:30
+const TIME_LIMIT = 45; // 1:30
 const PREVIEW_TIME = 3; // segundos com cartas viradas antes do jogo
 
 function buildDeck() {
@@ -214,7 +214,7 @@ export default function Game() {
             </div>
             <h2 className="text-2xl font-black sm:text-3xl">ATENÇÃO!</h2>
             <p className="mt-3 text-base text-foreground/90 sm:text-lg">
-              Você terá <span className="font-black text-accent">1:30</span> para encontrar
+              Você terá <span className="font-black text-accent">45 segundos</span> para encontrar
               todos os pares. Boa sorte!
             </p>
             <p className="mt-2 text-sm text-foreground/70">
