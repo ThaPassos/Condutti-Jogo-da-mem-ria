@@ -4,8 +4,7 @@ import { sounds } from "../lib/sounds";
 import BotaoSom from "../components/BotaoSom";
 import AnimatedLines from "../components/LinhasAnimadas";
 import logoCondutti from "../assets/logoFundoEscuro.png";
-import qrCode1 from "../assets/qrcode (1).png";
-import qrCode2 from "../assets/qrcode (1).png"; 
+import qrCode1 from "../assets/qrcode2.png";
 
 export default function Home() {
   return (
@@ -55,10 +54,10 @@ export default function Home() {
           {/* QR Code 1 */}
           <div className="flex flex-col items-center gap-3">
             <a
-              href="https://condutti.com.br/" // ← troque pelo link correto
+              href="https://landing.condutti.com.br/exposec-2026" 
               target="_blank"
               rel="noreferrer"
-              className="grid h-32 w-32 place-items-center rounded-2xl p-2 shadow-card transition-transform hover:scale-105"
+              className="grid h-40 w-40 place-items-center rounded-2xl p-2 shadow-card transition-transform hover:scale-105"
             >
               <img
                 src={qrCode1}
@@ -69,29 +68,6 @@ export default function Home() {
             <p className="text-sm text-foreground/80">Visite o nosso site!</p>{/* ← troque o texto */}
           </div>
 
-          {/* QR Code 2 — substitua quando tiver a imagem */}
-          <div className="flex flex-col items-center gap-3">
-            <a
-              href="https://condutti.com.br/" // ← troque pelo link correto
-              target="_blank"
-              rel="noreferrer"
-              className="grid h-32 w-32 place-items-center rounded-2xl  p-2 shadow-card transition-transform hover:scale-105"
-            >
-              {qrCode2 ? (
-                <img
-                  src={qrCode2}
-                  alt="QR Code 2"
-                  className="h-full w-full object-contain"
-                />
-              ) : (
-                /* Placeholder cinza até a imagem chegar */
-                <div className="flex h-full w-full items-center justify-center rounded-xl bg-gray-200">
-                  <span className="text-xs font-bold text-gray-400">QR em breve</span>
-                </div>
-              )}
-            </a>
-            <p className="text-sm text-foreground/80">Visite o nosso site!</p>{/* ← troque o texto */}
-          </div>
         </div>
       </div>
     </div>

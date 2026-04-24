@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Sparkles, Crown, Hourglass } from "lucide-react";
+import { ArrowLeft, Sparkles, Crown, Hourglass, Eye } from "lucide-react";
 import Cartas from "../components/Cartas";
 import BotaoSom from "../components/BotaoSom";
 import { sounds } from "../lib/sounds";
@@ -23,7 +23,8 @@ const PAIR_IMAGES: Record<string, string> = {
 
 const PAIRS = ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8"];
 const TOTAL_PAIRS = PAIRS.length;
-const TIME_LIMIT = 60;
+const TIME_LIMIT = 90; // 1:30
+const PREVIEW_TIME = 3; // segundos com cartas viradas antes do jogo
 
 function buildDeck() {
   const deck = PAIRS.flatMap((p, i) => [
@@ -39,7 +40,9 @@ function buildDeck() {
 
 export default function Game() {
   const navigate = useNavigate();
-  const [started, setStarted] = useState(false);
+  const [started, setStarted] = useState(false); // jogo em andamento
+  const [previewing, setPreviewing] = useState(false); // mostrando todas as cartas
+  const [previewLeft, setPreviewLeft] = useState(PREVIEW_TIME);
   const [timeLeft, setTimeLeft] = useState(TIME_LIMIT);
   const [deck, setDeck] = useState(() => buildDeck());
   const [selected, setSelected] = useState<number[]>([]);
@@ -48,9 +51,7 @@ export default function Game() {
   const [globalRecord, setGlobalRecord] = useState<number | null>(null);
 
   const finishedRef = useRef(false);
-  // Referência ao timestamp de início — garante timer preciso em mobile
   const startTimeRef = useRef<number | null>(null);
-  // Guarda pairsFound em ref para uso dentro de callbacks/timeouts
   const pairsFoundRef = useRef(0);
 
   const timeUsed = TIME_LIMIT - timeLeft;
@@ -60,12 +61,36 @@ export default function Game() {
     fetchGlobalRecord().then(setGlobalRecord).catch(() => setGlobalRecord(null));
   }, []);
 
-  // Contagem regressiva com Date.now() — preciso mesmo em mobile
-  useEffect(() => {
-    if (!started) return;
-    if (finishedRef.current) return;
+  // Inicia preview ao apertar "COMEÇAR"
+  function beginPreview() {
+    sounds.click();
+    setPreviewing(true);
+    setPreviewLeft(PREVIEW_TIME);
+    // Vira todas as cartas para mostrar
+    setDeck((d) => d.map((c) => ({ ...c, flipped: true })));
+  }
 
-    startTimeRef.current = Date.now();
+  // Contagem regressiva do preview
+  useEffect(() => {
+    if (!previewing) return;
+    if (previewLeft <= 0) {
+      // Encerra preview: desvira tudo e inicia jogo
+      setDeck((d) => d.map((c) => ({ ...c, flipped: false })));
+      setPreviewing(false);
+      setStarted(true);
+      startTimeRef.current = Date.now();
+      return;
+    }
+    const id = setTimeout(() => {
+      sounds.tick();
+      setPreviewLeft((t) => t - 1);
+    }, 1000);
+    return () => clearTimeout(id);
+  }, [previewing, previewLeft]);
+
+  // Contagem regressiva do jogo com Date.now() — preciso mesmo em mobile
+  useEffect(() => {
+    if (!started || finishedRef.current) return;
 
     const id = setInterval(() => {
       if (!startTimeRef.current) return;
@@ -96,13 +121,13 @@ export default function Game() {
         : TIME_LIMIT;
       const t = setTimeout(() => {
         navigate(`/derrota?pairs=${pairsFoundRef.current}&total=${TOTAL_PAIRS}&time=${elapsed}`);
-      }, 1000);
+      }, 1800);
       return () => clearTimeout(t);
     }
   }, [timeLeft, started, navigate]);
 
   function handleCardClick(idx: number) {
-    if (locked || !started || finishedRef.current) return;
+    if (locked || !started || previewing || finishedRef.current) return;
     const card = deck[idx];
     if (card.matched || card.flipped) return;
 
@@ -134,7 +159,7 @@ export default function Game() {
           setSelected([]);
           setLocked(false);
 
-          // Verifica vitória imediatamente, sem depender do estado React
+          // Verifica vitória imediatamente
           if (newPairsFound === TOTAL_PAIRS && !finishedRef.current) {
             finishedRef.current = true;
             sounds.victory();
@@ -174,13 +199,14 @@ export default function Game() {
   }
 
   const lowTime = timeLeft <= 10 && timeLeft > 0;
+  const showStartModal = !started && !previewing;
 
   return (
     <div className="relative min-h-screen pb-32">
       <BotaoSom />
 
-      {/* Modal de início */}
-      {!started && (
+      {/* Modal de início com aviso do preview */}
+      {showStartModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
           <div className="w-full max-w-md rounded-2xl bg-secondary p-8 text-center shadow-card">
             <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-full bg-accent">
@@ -188,8 +214,11 @@ export default function Game() {
             </div>
             <h2 className="text-2xl font-black sm:text-3xl">ATENÇÃO!</h2>
             <p className="mt-3 text-base text-foreground/90 sm:text-lg">
-              Você terá <span className="font-black text-accent">1:00</span> para encontrar
+              Você terá <span className="font-black text-accent">1:30</span> para encontrar
               todos os pares. Boa sorte!
+            </p>
+            <p className="mt-2 text-sm text-foreground/70">
+              Você verá as cartas por <span className="font-black">3 segundos</span> antes do início.
             </p>
             {globalRecord !== null && (
               <p className="mt-2 text-sm text-foreground/70">
@@ -197,11 +226,23 @@ export default function Game() {
               </p>
             )}
             <button
-              onClick={() => { sounds.click(); setStarted(true); }}
+              onClick={beginPreview}
               className="mt-6 inline-flex items-center justify-center rounded-full bg-primary px-8 py-3 text-base font-bold text-primary-foreground shadow-btn transition-all hover:scale-105 hover:bg-accent active:translate-y-1 active:shadow-btn-active sm:text-lg"
             >
               COMEÇAR
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Overlay de preview — banner no topo */}
+      {previewing && (
+        <div className="fixed left-1/2 top-4 z-50 -translate-x-1/2">
+          <div className="flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-accent-foreground shadow-card">
+            <Eye className="h-5 w-5" />
+            <span className="text-base font-black sm:text-lg">
+              MEMORIZE! {previewLeft}s
+            </span>
           </div>
         </div>
       )}

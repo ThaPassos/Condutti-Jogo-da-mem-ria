@@ -3,11 +3,12 @@ import { Link, useSearchParams } from "react-router-dom";
 import { Trophy, Clock, Crown, Home as HomeIcon, Globe } from "lucide-react";
 import Confetes from "../components/Confetes";
 import BotaoSom from "../components/BotaoSom";
+import Roleta from "../components/Roleta";
 import { formatTime } from "../lib/record";
 import { fetchGlobalRecord, saveGlobalRecord } from "../lib/api";
 import { sounds } from "../lib/sounds";
 
-export default function Win() {
+export default function Vitoria() {
   const [params] = useSearchParams();
   const time = Number(params.get("time")) || 0;
 
@@ -52,86 +53,88 @@ export default function Win() {
         }}
       />
 
-      <div className="relative mx-auto flex min-h-screen w-full max-w-xl flex-col items-center justify-center gap-6 px-6 py-12 text-center">
-        <div className="animate-float-up grid h-24 w-24 place-items-center rounded-full bg-accent shadow-card sm:h-32 sm:w-32">
-          <Trophy className="h-12 w-12 text-accent-foreground sm:h-16 sm:w-16" />
+      <div className="relative mx-auto flex min-h-screen w-full max-w-2xl flex-col items-center justify-center gap-4 px-6 py-8 text-center">
+        <div className="animate-float-up grid h-16 w-16 place-items-center rounded-full bg-accent shadow-card sm:h-20 sm:w-20">
+          <Trophy className="h-8 w-8 text-accent-foreground sm:h-10 sm:w-10" />
         </div>
 
         <h1
-          className="animate-float-up text-5xl font-black leading-none tracking-tight sm:text-7xl"
+          className="animate-float-up text-3xl font-black leading-none tracking-tight sm:text-5xl"
           style={{ animationDelay: "0.1s", textShadow: "0 4px 20px rgba(0,0,0,0.4)" }}
         >
           PARABÉNS!
         </h1>
-        <p
-          className="animate-float-up text-lg text-foreground/90 sm:text-2xl"
-          style={{ animationDelay: "0.2s" }}
-        >
-          Você concluiu o jogo!
-        </p>
 
+        {/* Cards de tempo e recorde — layout compacto do primeiro */}
         <div
-          className="animate-float-up mt-4 grid w-full grid-cols-1 gap-4 sm:grid-cols-2"
+          className="animate-float-up grid w-full grid-cols-2 gap-3"
           style={{ animationDelay: "0.3s" }}
         >
-          {/* Seu tempo */}
-          <div className="rounded-2xl bg-secondary p-5 shadow-card">
+          <div className="rounded-xl bg-secondary p-3 shadow-card">
             <div className="flex items-center justify-center gap-2 text-foreground/70">
-              <Clock className="h-4 w-4" />
-              <span className="text-xs font-bold uppercase tracking-widest">Seu tempo</span>
+              <Clock className="h-3 w-3" />
+              <span className="text-[10px] font-bold uppercase tracking-widest">Seu tempo</span>
             </div>
-            <p className="mt-2 text-4xl font-black tabular-nums sm:text-5xl">{formatTime(time)}</p>
+            <p className="mt-1 text-2xl font-black tabular-nums sm:text-3xl">{formatTime(time)}</p>
           </div>
 
-          {/* Recorde global */}
           <div
             className={
-              "rounded-2xl p-5 shadow-card transition-all " +
+              "rounded-xl p-3 shadow-card transition-all " +
               (isNewGlobal ? "bg-accent text-accent-foreground animate-pop" : "bg-secondary")
             }
           >
             <div className="flex items-center justify-center gap-2 opacity-80">
               {isNewGlobal ? (
-                <Crown className="h-4 w-4" />
+                <Crown className="h-3 w-3" />
               ) : (
-                <Globe className="h-4 w-4" />
+                <Globe className="h-3 w-3" />
               )}
-              <span className="text-xs font-bold uppercase tracking-widest">
+              <span className="text-[10px] font-bold uppercase tracking-widest">
                 {isNewGlobal ? "Novo recorde!" : "Recorde global"}
               </span>
             </div>
-            <p className="mt-2 text-4xl font-black tabular-nums sm:text-5xl">
+            <p className="mt-1 text-2xl font-black tabular-nums sm:text-3xl">
               {loading ? "..." : globalRecord !== null ? formatTime(globalRecord) : "--:--"}
             </p>
           </div>
         </div>
 
+        {/* Roleta de brindes - mantida do primeiro código */}
+        <div
+          className="animate-float-up mt-2 mb-[70px] 
+                    w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl xl:max-w-3xl"
+          style={{ animationDelay: "0.4s" }}
+        >
+          <Roleta />
+        </div>
+
         {isNewGlobal && !loading && (
           <p
-            className="animate-float-up text-sm font-bold uppercase tracking-widest text-accent"
-            style={{ animationDelay: "0.4s" }}
+            className="animate-float-up -mt-4 text-sm font-bold uppercase tracking-widest text-accent"
+            style={{ animationDelay: "0.45s" }}
           >
-            Você bateu o recorde!
+            Você bateu o recorde global!
           </p>
         )}
 
         <div
-          className="animate-float-up mt-4 flex flex-col gap-3 sm:flex-row"
+          className="animate-float-up flex flex-col gap-3 sm:flex-row"
           style={{ animationDelay: "0.5s" }}
         >
           <Link
-            to="/jogo"
+            to="/game"
             onClick={() => sounds.click()}
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-8 py-4 text-base font-bold text-accent-foreground shadow-btn transition-all hover:scale-105 active:translate-y-1 active:shadow-btn-active sm:text-lg"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-bold text-accent-foreground shadow-btn transition-all hover:scale-105 active:translate-y-1 active:shadow-btn-active sm:text-base"
           >
             JOGAR NOVAMENTE
           </Link>
           <Link
             to="/"
             onClick={() => sounds.click()}
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-bold text-primary-foreground shadow-btn transition-all hover:scale-105 active:translate-y-1 active:shadow-btn-active sm:text-lg"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-btn transition-all hover:scale-105 active:translate-y-1 active:shadow-btn-active sm:text-base"
           >
-            <HomeIcon className="h-5 w-5" />
+            <HomeIcon className="h-4 w-4" />
             INÍCIO
           </Link>
         </div>
