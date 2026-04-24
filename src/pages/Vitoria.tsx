@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { Trophy, Clock, Crown, Home as HomeIcon, Globe } from "lucide-react";
 import Confetes from "../components/Confetes";
 import BotaoSom from "../components/BotaoSom";
@@ -11,24 +11,26 @@ import { sounds } from "../lib/sounds";
 export default function Vitoria() {
   const [params] = useSearchParams();
   const time = Number(params.get("time")) || 0;
+  const navigate = useNavigate();
 
   const [globalRecord, setGlobalRecord] = useState<number | null>(null);
   const [isNewGlobal, setIsNewGlobal] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  // Redireciona para o início após 10 segundos
+  useEffect(() => {
+    const id = setTimeout(() => navigate("/"), 10000);
+    return () => clearTimeout(id);
+  }, [navigate]);
 
   useEffect(() => {
     if (time < 1) return;
 
     async function handleRecord() {
       try {
-        // Busca o recorde global atual antes de salvar
         const current = await fetchGlobalRecord();
-
-        // Salva o novo tempo e recebe o melhor recorde atualizado
         const best = await saveGlobalRecord(time);
-
         setGlobalRecord(best);
-        // É novo recorde global se melhorou (ou não havia nenhum)
         setIsNewGlobal(current === null || time < current);
       } catch {
         setGlobalRecord(null);
@@ -65,7 +67,7 @@ export default function Vitoria() {
           PARABÉNS!
         </h1>
 
-        {/* Cards de tempo e recorde — layout compacto do primeiro */}
+        {/* Cards de tempo e recorde */}
         <div
           className="animate-float-up grid w-full grid-cols-2 gap-3"
           style={{ animationDelay: "0.3s" }}
@@ -100,7 +102,6 @@ export default function Vitoria() {
           </div>
         </div>
 
-
         {isNewGlobal && !loading && (
           <p
             className="animate-float-up -mt-4 text-sm font-bold uppercase tracking-widest text-accent mb-[70px]"
@@ -110,10 +111,9 @@ export default function Vitoria() {
           </p>
         )}
 
-        {/* Roleta de brindes - mantida do primeiro código */}
+        {/* Roleta de brindes */}
         <div
-          className="animate-float-up mt-2 mb-[70px] 
-                    w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl xl:max-w-3xl"
+          className="animate-float-up mt-2 mb-[70px] w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl xl:max-w-3xl"
           style={{ animationDelay: "0.4s" }}
         >
           <Roleta />
@@ -124,7 +124,7 @@ export default function Vitoria() {
           style={{ animationDelay: "0.5s" }}
         >
           <Link
-            to="/game"
+            to="/jogo"
             onClick={() => sounds.click()}
             className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-bold text-accent-foreground shadow-btn transition-all hover:scale-105 active:translate-y-1 active:shadow-btn-active sm:text-base"
           >

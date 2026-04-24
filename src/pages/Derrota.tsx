@@ -1,4 +1,5 @@
-import { Link, useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { Clock, Sparkles, Frown, Home as HomeIcon } from "lucide-react";
 import BotaoSom from "../components/BotaoSom";
 import { formatTime } from "../lib/record";
@@ -9,6 +10,13 @@ export default function Lose() {
   const pairs = Number(params.get("pairs")) || 0;
   const total = Number(params.get("total")) || 8;
   const time = Number(params.get("time")) || 0;
+  const navigate = useNavigate();
+
+  // Redireciona para o início após 10 segundos
+  useEffect(() => {
+    const id = setTimeout(() => navigate("/"), 10000);
+    return () => clearTimeout(id);
+  }, [navigate]);
 
   return (
     <div className="relative min-h-screen overflow-hidden">
@@ -69,7 +77,7 @@ export default function Lose() {
           style={{ animationDelay: "0.5s" }}
         >
           <Link
-            to="/game"
+            to="/jogo"
             onClick={() => sounds.click()}
             className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-8 py-4 text-base font-bold text-accent-foreground shadow-btn transition-all hover:scale-105 active:translate-y-1 active:shadow-btn-active sm:text-lg"
           >
