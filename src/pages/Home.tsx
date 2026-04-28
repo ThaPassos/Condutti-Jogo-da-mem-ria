@@ -53,6 +53,7 @@ export default function Home() {
         <div className="mt-10 flex flex-wrap justify-center gap-8">
           {/* QR Code 1 */}
           <div className="flex flex-col items-center gap-3">
+            <p className="text-sm text-foreground/80 font-extrabold">Acesse para se cadastrar!</p>
             <a
               href="https://landing.condutti.com.br/exposec-2026" 
               target="_blank"
@@ -65,7 +66,6 @@ export default function Home() {
                 className="h-full w-full object-contain"
               />
             </a>
-            <p className="text-sm text-foreground/80">Visite o nosso site!</p>{/* ← troque o texto */}
           </div>
 
         </div>
