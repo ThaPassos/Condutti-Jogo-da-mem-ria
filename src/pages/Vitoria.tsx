@@ -17,9 +17,9 @@ export default function Vitoria() {
   const [isNewGlobal, setIsNewGlobal] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Redireciona para o início após 10 segundos
+  // Redireciona para o início 
   useEffect(() => {
-    const id = setTimeout(() => navigate("/"), 15000);
+    const id = setTimeout(() => navigate("/"), 30000);
     return () => clearTimeout(id);
   }, [navigate]);
 
