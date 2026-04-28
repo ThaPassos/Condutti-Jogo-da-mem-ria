@@ -52,8 +52,8 @@ export default function Home() {
         {/* QR Codes */}
         <div className=" flex flex-wrap justify-center gap-8">
           {/* QR Code 1 */}
-          <div className="flex flex-col items-center gap-3 mt-[100px]">
-            <p className="text-[30px] text-foreground/80 font-extrabold tracking-tight animate-title">ACESSE PARA SE CADASTRAR!</p>
+          <div className="flex flex-col items-center gap-3 mt-[90px]">
+            <p className="lg:text-[34px] text-[22px] text-foreground/80 font-extrabold tracking-tight animate-title">ACESSE PARA SE CADASTRAR!</p>
             <a
               href="https://landing.condutti.com.br/exposec-2026" 
               target="_blank"
