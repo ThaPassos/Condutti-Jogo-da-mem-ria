@@ -23,7 +23,7 @@ const PAIR_IMAGES: Record<string, string> = {
 
 const PAIRS = ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8"];
 const TOTAL_PAIRS = PAIRS.length;
-const TIME_LIMIT = 45; // 1:30
+const TIME_LIMIT = 45; // 45 segundos
 const PREVIEW_TIME = 3; // segundos com cartas viradas antes do jogo
 
 function buildDeck() {
@@ -166,34 +166,39 @@ export default function Game() {
             const elapsed = startTimeRef.current
               ? Math.floor((Date.now() - startTimeRef.current) / 1000)
               : timeUsed;
-            maybeSaveRecord(elapsed);
+            // Salva o tempo RESTANTE (maior é melhor)
+            const timeRemaining = TIME_LIMIT - elapsed;
+            maybeSaveRecord(timeRemaining);
             setTimeout(() => {
               navigate(`/vitoria?time=${elapsed}`);
             }, 900);
           }
-        }, 350);
+        }, 250); // Reduzido de 350ms para 250ms
       } else {
-        // Par errado
+        // Par errado - tempo reduzido para maior agilidade
         setLocked(true);
+        
+        // Mostra o erro brevemente
+        setDeck((d) => {
+          const cp = d.slice();
+          cp[a] = { ...cp[a], wrong: true };
+          cp[b] = { ...cp[b], wrong: true };
+          return cp;
+        });
+        
+        sounds.miss();
+        
+        // Delay mais curto antes de desvirar
         setTimeout(() => {
-          sounds.miss();
           setDeck((d) => {
             const cp = d.slice();
-            cp[a] = { ...cp[a], wrong: true };
-            cp[b] = { ...cp[b], wrong: true };
+            cp[a] = { ...cp[a], flipped: false, wrong: false };
+            cp[b] = { ...cp[b], flipped: false, wrong: false };
             return cp;
           });
-          setTimeout(() => {
-            setDeck((d) => {
-              const cp = d.slice();
-              cp[a] = { ...cp[a], flipped: false, wrong: false };
-              cp[b] = { ...cp[b], flipped: false, wrong: false };
-              return cp;
-            });
-            setSelected([]);
-            setLocked(false);
-          }, 600);
-        }, 600);
+          setSelected([]);
+          setLocked(false);
+        }, 350); // Reduzido de 600ms para 350ms
       }
     }
   }
