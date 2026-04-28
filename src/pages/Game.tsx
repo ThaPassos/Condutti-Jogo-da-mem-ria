@@ -198,7 +198,7 @@ export default function Game() {
           });
           setSelected([]);
           setLocked(false);
-        }, 500); 
+        }, 600); 
       }
     }
   }
