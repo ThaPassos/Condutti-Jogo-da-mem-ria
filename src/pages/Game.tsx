@@ -100,7 +100,7 @@ export default function Game() {
 
       // Encerra o intervalo quando chegar a zero
       if (remaining === 0) clearInterval(id);
-    }, 500); // 500ms para maior responsividade
+    }, 500); //
 
     return () => clearInterval(id);
   }, [started]);
@@ -173,9 +173,9 @@ export default function Game() {
               navigate(`/vitoria?time=${elapsed}`);
             }, 900);
           }
-        }, 250); // Reduzido de 350ms para 250ms
+        }, 400); // Ajustado para 400ms - tempo suficiente para ver o par
       } else {
-        // Par errado - tempo reduzido para maior agilidade
+        // Par errado
         setLocked(true);
         
         // Mostra o erro brevemente
@@ -188,7 +188,7 @@ export default function Game() {
         
         sounds.miss();
         
-        // Delay mais curto antes de desvirar
+        // Delay para mostrar qual foi o erro antes de desvirar
         setTimeout(() => {
           setDeck((d) => {
             const cp = d.slice();
@@ -198,7 +198,7 @@ export default function Game() {
           });
           setSelected([]);
           setLocked(false);
-        }, 350); // Reduzido de 600ms para 350ms
+        }, 500); 
       }
     }
   }
