@@ -104,7 +104,7 @@ export default function Vitoria() {
 
         {isNewGlobal && !loading && (
           <p
-            className="animate-float-up -mt-4 text-sm font-bold uppercase tracking-widest text-accent mb-[70px]"
+            className="animate-float-up mt-[20px] text-sm font-bold uppercase tracking-widest text-accent mb-[70px]"
             style={{ animationDelay: "0.45s" }}
           >
             Você bateu o recorde global!
