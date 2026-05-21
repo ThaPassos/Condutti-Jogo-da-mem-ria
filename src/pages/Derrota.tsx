@@ -4,6 +4,7 @@ import { Clock, Sparkles, Frown, Home as HomeIcon } from "lucide-react";
 import BotaoSom from "../components/BotaoSom";
 import { formatTime } from "../lib/record";
 import { sounds } from "../lib/sounds";
+import logoCondutti from "../assets/logoCondutti.png";
 
 export default function Lose() {
   const [params] = useSearchParams();
@@ -29,6 +30,16 @@ export default function Lose() {
             "radial-gradient(ellipse at center, color-mix(in oklab, var(--destructive) 25%, transparent), transparent 65%)",
         }}
       />
+
+       {/* Logo */}
+        <div className="animate-float-up flex flex-col items-center">
+          <img
+            src={logoCondutti}
+            alt="Condutti Cabos Especiais"
+            className="w-[200px] sm:w-[350px] mt-[40px] h-auto object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)]"
+          />
+          <div className="mx-auto mt-4 h-px w-3/4 bg-border" />
+        </div>
 
       <div className="relative mx-auto flex min-h-screen w-full max-w-xl flex-col items-center justify-center gap-6 px-6 py-12 text-center">
         <div className="animate-float-up grid h-24 w-24 place-items-center rounded-full bg-destructive shadow-card sm:h-32 sm:w-32">

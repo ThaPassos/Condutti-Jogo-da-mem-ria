@@ -7,6 +7,7 @@ import Roleta from "../components/Roleta";
 import { formatTime } from "../lib/record";
 import { fetchGlobalRecord, saveGlobalRecord } from "../lib/api";
 import { sounds } from "../lib/sounds";
+import logoCondutti from "../assets/logoCondutti.png";
 
 export default function Vitoria() {
   const [params] = useSearchParams();
@@ -44,6 +45,15 @@ export default function Vitoria() {
 
   return (
     <div className="relative min-h-screen overflow-hidden">
+       {/* Logo */}
+        <div className="animate-float-up flex flex-col items-center">
+          <img
+            src={logoCondutti}
+            alt="Condutti Cabos Especiais"
+            className="w-[200px] sm:w-[350px] mt-[40px] h-auto object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)]"
+          />
+          <div className="mx-auto mt-4 h-px w-3/4 bg-border" />
+        </div>
       <BotaoSom />
       <Confetes count={80} />
 
