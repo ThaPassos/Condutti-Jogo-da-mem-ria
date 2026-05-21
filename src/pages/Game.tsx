@@ -15,6 +15,7 @@ import card5 from "../assets/card-5.png";
 import card6 from "../assets/card-6.png";
 import card7 from "../assets/card-7.png";
 import card8 from "../assets/card-8.png";
+import logoCondutti from "../assets/logoCondutti.png";
 
 const PAIR_IMAGES: Record<string, string> = {
   p1: card1, p2: card2, p3: card3, p4: card4,
@@ -213,7 +214,16 @@ export default function Game() {
       {/* Modal de início com aviso do preview */}
       {showStartModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
+
           <div className="w-full max-w-md rounded-2xl bg-secondary p-8 text-center shadow-card">
+            {/* Logo */}
+        <div className="animate-float-up flex flex-col items-center">
+          <img
+            src={logoCondutti}
+            alt="Condutti Cabos Especiais"
+            className="w-[180px] sm:w-[180px] h-auto object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)]"
+          />
+        </div>
             <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-full bg-accent">
               <Hourglass className="h-8 w-8 text-accent-foreground" />
             </div>
@@ -253,6 +263,14 @@ export default function Game() {
       )}
 
       <div className="mx-auto w-full max-w-6xl px-4 pt-8 sm:pt-12">
+        {/* Logo */}
+        <div className="animate-float-up flex flex-col items-center">
+          <img
+            src={logoCondutti}
+            alt="Condutti Cabos Especiais"
+            className="w-[200px] sm:w-[350px] h-auto object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)]"
+          />
+        </div>
         <header className="text-center">
           <h1 className="text-3xl font-black tracking-tight sm:text-5xl">
             JOGO DA <span className="text-accent">MEMÓRIA</span>
