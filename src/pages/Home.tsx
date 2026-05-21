@@ -29,7 +29,7 @@ export default function Home() {
           <img
             src={logoCondutti}
             alt="Condutti Cabos Especiais"
-            className="w-[280px] sm:w-[350px] h-auto object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)]"
+            className="w-[280px] sm:w-[380px] h-auto object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)]"
           />
         </div>
 
