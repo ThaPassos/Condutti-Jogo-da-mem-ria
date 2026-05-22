@@ -38,14 +38,13 @@ export default function Home() {
         <h1 className="animate-title text-4xl font-black leading-tight tracking-tight sm:text-6xl mt-[40px]">
           JOGO DA <span className="text-accent">MEMÓRIA</span>
         </h1>
-        <p className="text-base text-foreground/80 sm:text-xl mb-[40px]">Encontre os pares e vença!</p>
-
+        
         
         {/* QR Codes */}
         <div className=" flex flex-wrap justify-center gap-8">
           {/* QR Code 1 */}
-          <div className="flex flex-col items-center gap-3 mt-[20px]">
-            <p className="lg:text-[32px] text-[25px] text-foreground/80 font-extrabold tracking-tight animate-title">ACESSE PARA SE CADASTRAR!</p>
+          <div className="flex flex-col items-center gap-3 mt-[40px]">
+            <p className="lg:text-[29px] text-[25px] text-foreground/80 font-extrabold tracking-tight animate-title">ACESSE PARA SE CADASTRAR!</p>
             <a
               href="https://landing.condutti.com.br/exposec-2026" 
               target="_blank"
@@ -61,6 +60,8 @@ export default function Home() {
           </div>
 
         </div>
+        
+        <p className="text-base text-foreground/80 sm:text-xl mt-[60px] mb-[-20px]">Encontre os pares e vença!</p>
 
         <Link
           to="/jogo"
