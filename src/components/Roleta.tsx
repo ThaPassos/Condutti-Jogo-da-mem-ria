@@ -5,7 +5,6 @@ import { sounds } from "../lib/sounds";
 const PRIZES = [
   { label: "Boné",   colorVar: "--accent" },
   { label: "Caneta", colorVar: "--primary" },
-  { label: "Cordão", colorVar: "--success" },
   { label: "Ecobag", colorVar: "--destructive" },
 ];
 
